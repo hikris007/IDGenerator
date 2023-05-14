@@ -18,7 +18,9 @@ public class SequenceCodeGenerator {
 
     private GENDER gender = GENDER.ALL;
 
-    List<SequenceCode> sequenceCodes;
+    private List<SequenceCode> sequenceCodes;
+
+    private SequenceCodeIterator sequenceCodeIterator;
 
     public static SequenceCodeGenerator builder(){
         SequenceCodeGenerator sequenceCodeGenerator = new SequenceCodeGenerator();
@@ -26,20 +28,11 @@ public class SequenceCodeGenerator {
         return sequenceCodeGenerator;
     }
 
-    public static SequenceCodeGenerator ofRange(int min,int max,GENDER gender){
-        int[] genderCodes = null;
-        switch (gender){
-            case ALL:
-                genderCodes = SequenceCodeGenerator.genderCodes;
-                break;
+    public static SequenceCodeGenerator ofRange(int min,int max,GENDER gender) {
+        if(min < 0 || max > 99)
+            throw new IllegalArgumentException("range is about 0-99");
 
-            case MALE:
-                genderCodes = SequenceCodeGenerator.maleCodes;
-                break;
-
-            case FEMALE:
-                genderCodes = SequenceCodeGenerator.femaleCodes;
-        }
+        int[] genderCodes = getGenderCodes(gender);
 
         SequenceCodeGenerator sequenceCodeGenerator = SequenceCodeGenerator.builder();
 
@@ -53,27 +46,20 @@ public class SequenceCodeGenerator {
             }
         }
 
+        sequenceCodeGenerator.sequenceCodeIterator = new SequenceCodeIterator(sequenceCodeGenerator.sequenceCodes);
+
         return sequenceCodeGenerator;
     }
 
-    public static SequenceCodeGenerator ofCodes(int[] codes,GENDER gender){
-        int[] genderCodes = null;
-        switch (gender){
-            case ALL:
-                genderCodes = SequenceCodeGenerator.genderCodes;
-                break;
-
-            case MALE:
-                genderCodes = SequenceCodeGenerator.maleCodes;
-                break;
-
-            case FEMALE:
-                genderCodes = SequenceCodeGenerator.femaleCodes;
-        }
+    public static SequenceCodeGenerator ofCodes(int[] codes,GENDER gender) throws Exception {
+        int[] genderCodes = getGenderCodes(gender);
 
         SequenceCodeGenerator sequenceCodeGenerator = SequenceCodeGenerator.builder();
 
         for (int code : codes) {
+            if(code < 0 || code > 99)
+                throw new Exception("range is about 0-99");
+
             for (int genderCode : genderCodes) {
                 sequenceCodeGenerator.sequenceCodes.add(
                         SequenceCode.builder()
@@ -83,11 +69,21 @@ public class SequenceCodeGenerator {
             }
         }
 
+        sequenceCodeGenerator.sequenceCodeIterator = new SequenceCodeIterator(sequenceCodeGenerator.sequenceCodes);
+
         return sequenceCodeGenerator;
     }
 
+    public static int[] getGenderCodes(GENDER gender){
+        return switch (gender) {
+            case ALL -> SequenceCodeGenerator.genderCodes;
+            case MALE -> SequenceCodeGenerator.maleCodes;
+            case FEMALE -> SequenceCodeGenerator.femaleCodes;
+        };
+    }
+
     public SequenceCodeIterator iterator(){
-        return new SequenceCodeIterator(this.getSequenceCodes());
+        return this.sequenceCodeIterator;
     }
 
     public int[] getMaleCodes() {
