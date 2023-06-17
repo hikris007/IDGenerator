@@ -5,7 +5,6 @@ import org.ooohmygosh.model.SequenceCode;
 public class SequenceCodeUtils {
     public static String formatter(SequenceCode sequenceCode) {
         if(
-                sequenceCode.getGenderCode() > 0||
                 sequenceCode.getSequenceCode() < 0||
                 sequenceCode.getSequenceCode() > 99
         )

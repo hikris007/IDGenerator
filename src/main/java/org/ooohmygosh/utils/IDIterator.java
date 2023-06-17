@@ -90,7 +90,7 @@ public class IDIterator implements Iterator<ID> {
                 this.currentBirthday = this.currentBirthdayIterator.next();
                 break;
             }else if(i == 0 && this.currentAddressIterator.hasNext()){
-                this.currentSequenceCode = this.currentSequenceCodeIterator.next();
+                this.currentAddress = this.currentAddressIterator.next();
                 break;
             }else{
                 if(i == 0){
